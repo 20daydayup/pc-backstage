@@ -16,10 +16,11 @@ export default {
   /*
   新增BaseTrademark
   */
-  addTrademark() {
+  addTrademark(data) {
     return request({
       method: "POST",
-      url: `${api_name}/save`
+      url: `${api_name}/save`,
+      data,//传什么用什么
     });
   },
   /*
@@ -34,10 +35,11 @@ export default {
   /*
   修改BaseTrademark
   */
-  updataTrademark() {
+  updataTrademark(data) {
     return request({
       method: "PUT",
-      url: `${api_name}/updata`
+      url: `${api_name}/updata`,
+      data,
     });
   }
 };
