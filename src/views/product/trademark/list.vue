@@ -1,8 +1,6 @@
 <template>
   <div>
-    <el-button type="primary" icon="el-icon-plus" @click="visible = true"
-      >添加</el-button
-    >
+    <el-button type="primary" icon="el-icon-plus" @click="add">添加</el-button>
     <el-table :data="trademarkList" border style="width: 100%">
       <el-table-column type="index" label="序号" width="130" align="center">
       </el-table-column>
@@ -14,9 +12,16 @@
       </el-table-column>
 
       <el-table-column>
-        <template>
-          <el-button type="warning" icon="el-icon-edit">修改</el-button>
-          <el-button type="danger" icon="el-icon-delete" @click="del">删除</el-button>
+        <template v-slot="{ row }">
+          <el-button type="warning" icon="el-icon-edit" @click="update(row)"
+            >修改</el-button
+          >
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            @click="open(row, scope.row.id)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -30,8 +35,12 @@
     >
     </el-pagination>
 
-    <!-- messagebox会频繁的卸载，样式是显示隐藏切换 -->
-    <el-dialog title="添加品牌" :visible.sync="visible" width="50%">
+    <!-- messagebox会频繁的卸载，样式复杂，dialog 样式是显示隐藏切换 -->
+    <el-dialog
+      :title="`${trademarkFrom.id ? '修改' : '添加'}品牌`"
+      :visible.sync="visible"
+      width="50%"
+    >
       <el-form
         :model="trademarkFrom"
         :rules="rules"
@@ -62,7 +71,7 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button @click="visible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('trademarkFrom')"
           >确 定</el-button
         >
@@ -73,11 +82,14 @@
 
 <script>
 // import {trademark} from "@api"//在main文件中经api挂载到原型上，可以不用引入直接使用
+
 export default {
   name: "tradmark",
   data() {
     return {
       trademarkList: [], //所有数据
+      page: 1, // 页码
+      limit: 3, // 每页条数
       visible: false, //添加数据弹框
       trademarkFrom: {
         // 表单数据
@@ -94,6 +106,22 @@ export default {
     };
   },
   methods: {
+    //添加
+    add() {
+      this.$refs.trademarkFrom && this.$refs.trademarkFrom.clearValidate(); // 清空表单的校验
+      this.visible = true; //显示弹窗
+      this.trademarkFrom = {}; //让数据为空
+    },
+    //修改
+    update(row) {
+      // 清空表单的校验 （点击取消后再次打开）
+      this.$refs.trademarkFrom && this.$refs.trademarkFrom.clearValidate();
+
+      this.visible = true; //弹框显示，在判断标题显示内容
+      // this.trademarkFrom = row; //地址值一样，修改trademarkForm会导致trademarkList发生变化
+      // this.trademarkForm = JSON.parse(JSON.stringify(row));//如果数据类型比较复杂
+      this.trademarkFrom = { ...row };
+    },
     //获取数据列表
     async getPageList(page, limit) {
       //$API暴露的是个对象
@@ -130,22 +158,78 @@ export default {
       return isValidType && isLt2M;
     },
 
-    //提交表单
+    //提交表单  发送请求
     submitForm(form) {
       this.$refs[form].validate(async (valid) => {
         if (valid) {
+          // 表单校验
+          const { trademarkFrom } = this;
+
+          // 代表是否是更新 有id就是更新
+          const isUpdate = !!trademarkFrom.id;
+
+          // 如果是修改需要验证
+          if (isUpdate) {
+            const tm = this.trademarkList.find(
+              (tm) => tm.id === trademarkFrom.id
+            );
+
+            if (
+              tm.tmName === trademarkFrom.tmName &&
+              tm.logoUrl === trademarkFrom.logoUrl
+            ) {
+              this.$message.warning("不能提交与之前一样的数据");
+              return;
+            }
+          }
+
           // 表单校验通过
-          // console.log(this.trademarkFrom);
-          const result = await this.$API.trademark.addTrademark(
-            this.trademarkFrom
-          );
+          // console.log(this.trademarkForm);
+          // 发送请求
+          let result;
+
+          if (isUpdate) {
+            result = await this.$API.trademark.updataTrademark(trademarkFrom);
+          } else {
+            result = await this.$API.trademark.addTrademark(trademarkFrom);
+          }
+
           if (result.code === 200) {
-            this.$message.success("添加品牌成功");
+            this.$message.success(`${isUpdate ? "修改" : "添加"}品牌成功~`);
+            this.visible = false; // 隐藏对话框
+            this.getPageList(this.page, this.limit); // 请求加载新数据
           } else {
             this.$message.error(result.message);
           }
         }
       });
+    },
+    //删除
+    open(row, id) {
+      console.log(row, id);
+      const hh = this.$confirm(
+        `确定永久删除 ${row.tmName} , 是否继续?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(async () => {
+          const result = await this.$API.trademark.delTrademark(id);
+          this.$message({
+            type: "success",
+            message: "删除成功!",
+          });
+          this.getPageList(this.page, this.limit); // 请求加载新数据
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
   },
   mounted() {
@@ -156,7 +240,7 @@ export default {
 
 <style lang="sass" scoped>
 .trademark-img
-  width: 150px
+  height: 100px
 
 .trademark-pagination
   text-align: right
