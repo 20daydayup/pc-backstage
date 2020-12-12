@@ -1,7 +1,12 @@
 <template>
   <div>
     <el-button type="primary" icon="el-icon-plus" @click="add">添加</el-button>
-    <el-table :data="trademarkList" border style="width: 100%">
+    <el-table
+      v-loading="loading"
+      :data="trademarkList"
+      border
+      style="width: 100%"
+    >
       <el-table-column type="index" label="序号" width="130" align="center">
       </el-table-column>
       <el-table-column prop="tmName" label="品牌名称"> </el-table-column>
@@ -11,7 +16,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column>
+      <el-table-column label="操作">
         <template v-slot="{ row }">
           <el-button type="warning" icon="el-icon-edit" @click="update(row)"
             >修改</el-button
@@ -31,7 +36,7 @@
       :page-sizes="[3, 6, 9]"
       :page-size="3"
       layout="prev, pager, next,jumper,sizes,total"
-      :total="1000"
+      :total="total"
     >
     </el-pagination>
 
@@ -88,9 +93,11 @@ export default {
   data() {
     return {
       trademarkList: [], //所有数据
+      total: 0, // 总数
       page: 1, // 页码
       limit: 3, // 每页条数
       visible: false, //添加数据弹框
+      isLoading: false, //loading
       trademarkFrom: {
         // 表单数据
         tmName: "",
@@ -122,17 +129,25 @@ export default {
       // this.trademarkForm = JSON.parse(JSON.stringify(row));//如果数据类型比较复杂
       this.trademarkFrom = { ...row };
     },
+
     //获取数据列表
     async getPageList(page, limit) {
-      //$API暴露的是个对象
-      const result = await this.$API.trademark.getPageList(page, limit);
+      //loading页面
+      this.loading = true;
+
+      const result = await this.$API.trademark.getPageList(page, limit); //$API暴露的是个对象
       // console.log(result);
       if (result.code === 200) {
-        this.$message.success("获取品牌分页成功");
+        this.$message.success("获取品牌分页列表成功~");
+        this.limit = result.data.size; // 代表每页显示的条数
+        this.page = result.data.current; // 代表当前页码
         this.trademarkList = result.data.records;
+        this.total = result.data.total; //总数
       } else {
-        this.$message.error("获取分页失败");
+        this.$message.error("获取品牌分页列表失败~");
       } //拦截器处理过了，不用try
+
+      this.loading = false; //无论成功失败都结束loading
     },
 
     //上传图片的成功回调
