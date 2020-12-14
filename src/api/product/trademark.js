@@ -35,10 +35,10 @@ export default {
   /*
   修改BaseTrademark
   */
-  updataTrademark(data) {
+ updateTrademark(data) {
     return request({
       method: "PUT",
-      url: `${api_name}/updata`,
+      url: `${api_name}/update`,
       data,
     });
   }

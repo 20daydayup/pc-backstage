@@ -8,3 +8,4 @@ export { default as order } from "./order";
 // 1. 引入默认暴露的内容重命名为order
 // 2. 将order给分别暴露出去
 export { default as trademark } from "./product/trademark";
+export { default as attrs } from "./product/attrs";
