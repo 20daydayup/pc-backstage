@@ -82,6 +82,8 @@ export default {
       } else {
         this.$message.error(result.message);
       }
+
+      this.$emit("clearList"); //重新点击一级分类时，列表和添加按钮都没有
     },
     async SelectCategroy2(category2Id) {
       this.category3List = [];
@@ -92,6 +94,8 @@ export default {
       } else {
         this.$message.error(result.message);
       }
+
+      this.$emit("clearList");
     },
     async SelectCategroy3(category3Id) {
       const category = {

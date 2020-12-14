@@ -1,9 +1,17 @@
 <template>
   <div>
-    <Category @change="getAttrList" :disabled="!isShowList" />
+    <Category
+      @change="getAttrList"
+      @clearList="clearList"
+      :disabled="!isShowList"
+    />
 
     <el-card v-show="isShowList" style="margin-top: 20px">
-      <el-button type="primary" icon="el-icon-plus" @click="isShowList = false"
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        :disabled="!category.category3Id"
+        @click="addAttr"
         >添加属性</el-button
       >
 
@@ -53,7 +61,6 @@
       <el-button @click="isShowList = true">取消</el-button>
 
       <el-table
-        v-show="!isShowList"
         :data="attr.attrValueList"
         border
         style="width: 100%; margin: 20px 0 20px"
@@ -112,7 +119,7 @@
 </template>
 
 <script>
-/*
+/*请求列表的参数
 attrName: "手机分类"
 attrValueList: Array(3)
 categoryId: 61
@@ -129,10 +136,28 @@ export default {
         attrName: "",
         attrValueList: [],
       },
+      category: {
+        category1Id: "", // 请求参数设为响应式
+        category2Id: "",
+        category3Id: "",
+      },
     };
   },
   methods: {
+    clearList() {
+      //重新选择一级分类的时候，清空列表
+
+      this.attrList = []; // 清空数据
+      this.category.category3Id = ""; // 禁用按钮
+    },
+    addAttr() {
+      // 显示添加属性列表
+      this.isShowList = false;
+      this.attrName = "";
+      this.attrValueList = [];
+    },
     async delAttr(row) {
+      // 删除属性
       const result = await this.$API.attrs.deleteAttr(row.id); //获取数据发送请求
       if (result.code === 200) {
         this.getAttrList(this.category); //刷新数据
@@ -148,9 +173,23 @@ export default {
       }
       row.edit = false;
     },
+    //保存
     async save() {
-      //保存
-      const result = await this.$API.attrs.saveAttr(this.attr); //获取数据发送请求
+      // 判断是否是添加
+      const isAdd = !this.attr.id;
+
+      const data = this.attr;
+
+      if (isAdd) {
+        // this.attr里面只有attrName和attrValueList
+        // 还需要categoryId和categoryLevel
+        data.categoryId = this.category.category3Id;
+        data.categoryLevel = 3;
+      }
+
+      // 修改
+      const result = await this.$API.attrs.saveAttr(data); //获取数据发送请求
+
       if (result.code === 200) {
         this.$message.success("更新数据成功");
         this.isShowList = true; //显示

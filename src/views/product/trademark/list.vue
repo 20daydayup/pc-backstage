@@ -167,7 +167,7 @@ export default {
 
     //添加
     add() {
-      this.$refs.trademarkForm.clearValidate(); // 清空表单的校验
+      this.$refs.trademarkForm && this.$refs.trademarkForm.clearValidate(); // 清空表单的校验
       this.visible = true; //显示弹窗
       this.trademarkForm = {
         tmName: "",
