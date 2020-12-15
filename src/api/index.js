@@ -9,3 +9,4 @@ export { default as order } from "./order";
 // 2. 将order给分别暴露出去
 export { default as trademark } from "./product/trademark";
 export { default as attrs } from "./product/attrs";
+export { default as spu } from "./product/spu";

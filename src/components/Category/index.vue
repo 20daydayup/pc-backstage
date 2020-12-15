@@ -85,6 +85,7 @@ export default {
 
       this.$emit("clearList"); //重新点击一级分类时，列表和添加按钮都没有
     },
+
     async SelectCategroy2(category2Id) {
       this.category3List = [];
       this.category.category3Id = "";
@@ -95,7 +96,7 @@ export default {
         this.$message.error(result.message);
       }
 
-      this.$emit("clearList");
+      this.$bus.$emit("clearList");
     },
     async SelectCategroy3(category3Id) {
       const category = {
@@ -105,7 +106,7 @@ export default {
       // console.log(category);
 
       // 子组件给父组件传递参数 自定义事件 ,由父组件发送请求（因为父组件修改完成后需要重新请求数据）
-      this.$emit("change", category);
+      this.$bus.$emit("change", category);
     },
   },
   async mounted() {

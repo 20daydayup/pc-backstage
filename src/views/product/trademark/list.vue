@@ -139,7 +139,7 @@ export default {
   methods: {
     //删除
     open(row) {
-      console.log(row, id);
+      // console.log(row, id);
       const hh = this.$confirm(
         `确定永久删除 ${row.tmName} , 是否继续?`,
         "提示",

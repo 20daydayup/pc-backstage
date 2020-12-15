@@ -1,10 +1,12 @@
 <template>
   <div>
-    <Category
-      @change="getAttrList"
-      @clearList="clearList"
-      :disabled="!isShowList"
-    />
+    <!--自定义事件
+      <Category
+      @change="getAttrList" 当三级分类修改的时候触发。得到所有分类id
+      @clearList="clearList"  当1级分类和2级分类触发的时候触发，清空列表
+      :disabled="!isShowList" 决定select是否可以使用
+    /> -->
+    <Category :disabled="!isShowList" />
 
     <el-card v-show="isShowList" style="margin-top: 20px">
       <el-button
@@ -125,7 +127,7 @@ attrValueList: Array(3)
 categoryId: 61
 categoryLevel: 3
 id: 3621 */
-import Category from "./category";
+import Category from "@/components/Category";
 export default {
   name: "AttrList",
   data() {
@@ -235,6 +237,15 @@ export default {
         this.$message.error(result.message);
       }
     },
+  },
+  mounted() {
+    //三级联动多个组件使用
+    this.$bus.$on("change", this.getAttrList);
+    this.$bus.$on("clearList", this.clearList);
+  },
+  beforeDestroy() {
+    this.$bus.$off("change", this.getAttrList);
+    this.$bus.$off("clearList", this.clearList);
   },
   components: {
     Category,
