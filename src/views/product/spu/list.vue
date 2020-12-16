@@ -5,9 +5,16 @@
       @clearList 当1级分类和2级分类触发的时候触发，清空列表
       :disabled 决定select是否可以使用
      -->
-    <Category />
-    <SpuShowList v-if="isShowList" @showUpdataList="showUpdataList" />
-    <SpuUpdateList v-else :item="item" @showList="showList" />
+    <SkuList v-if="isShowSkuList" />
+
+    <div v-else>
+      <Category :disabled="!isShowList" />
+      <!--
+      v-show 组件虽然是隐藏的，但是组件被加载了~
+     -->
+      <SpuShowList v-if="isShowList" @showUpdataList="showUpdataList" />
+      <SpuUpdateList v-else :item="item" @showList="showList" />
+    </div>
   </div>
 </template>
 
@@ -15,13 +22,15 @@
 import Category from "@/components/Category";
 import SpuShowList from "./spuShowList";
 import SpuUpdateList from "./spuUpdateList";
-import { Row } from "element-ui";
+import SkuList from "./skuList";
+
 export default {
   name: "SpuList",
   data() {
     return {
       isShowList: true,
       item: {},
+      isShowSkuList: true,
     };
   },
   methods: {
@@ -42,6 +51,7 @@ export default {
     Category,
     SpuShowList,
     SpuUpdateList,
+    SkuList,
   },
 };
 </script>

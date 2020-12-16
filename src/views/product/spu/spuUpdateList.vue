@@ -13,7 +13,7 @@
           - this.$refs.spuForm.validate 校验表单
      -->
       <el-form :model="spu" label-width="80px" :rules="rules" ref="spuForm">
-        <el-form-item label="SPU名称" prop="spuName" inline>
+        <el-form-item label="SPU名称" prop="spuName" >
           <el-input
             placeholder="请输入SPU名称"
             v-model="spu.spuName"
