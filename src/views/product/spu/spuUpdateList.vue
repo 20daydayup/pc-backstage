@@ -26,7 +26,7 @@
               v-for="tm in trademarkList"
               :key="tm.id"
               :value="tm.id"
-              :label="tm.tmNam"
+              :label="tm.tmName"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -130,11 +130,6 @@
 
             <el-table-column label="操作" width="260">
               <template v-slot="{ row, $index }">
-                <el-button
-                  type="warning"
-                  icon="el-icon-edit"
-                  size="mini"
-                ></el-button>
                 <el-popconfirm
                   @onConfirm="delSaleAttr($index)"
                   :title="`确定删除${row.saleAttrName}吗？`"
@@ -153,7 +148,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
-          <el-button @click="$emit('showList',spu.category3Id)"
+          <el-button @click="$emit('showList', spu.category3Id)"
             >取消</el-button
           >
         </el-form-item>
@@ -232,7 +227,7 @@ export default {
   url: "blob:http://localhost:9528/4a2378e5-28d6-485e-b8c4-6eb4a
   */
   methods: {
-        //收集数据，保存
+    //收集数据，保存
     save() {
       this.$refs.spuForm.validate(async (valid) => {
         if (valid) {
@@ -279,7 +274,14 @@ export default {
           };
 
           //发送请求
-          const result = await this.$API.spu.updateSpuInfo(spu);
+          let result;
+
+          if (this.spu.id) {
+            result = await this.$API.spu.updateSpuInfo(spu);
+          }else{
+            result = await this.$API.spu.saveSpu(spu)
+          }
+
           if (result.code === 200) {
             // 切换回showList，
             this.$emit("showList", this.spu.category3Id);
@@ -407,7 +409,7 @@ export default {
       }
     },
 
-    // 获取所有品牌数据
+    // 获取销售品牌数据
     async getSaleAttrList() {
       const result = await this.$API.spu.getSaleAttrList();
       if (result.code === 200) {
@@ -488,6 +490,7 @@ export default {
       const result = await this.$API.spu.getTrademarkList();
       if (result.code === 200) {
         this.trademarkList = result.data;
+        console.log(result.data);
         this.$message.success("请求所有品牌数据成功");
       } else {
         this.$message.error(result.message);
@@ -495,10 +498,14 @@ export default {
     },
   },
   mounted() {
+    // id由后台生成，修改的时候才会有id标识
+    if (this.spu.id) {
+      this.getSpuImageList();
+      this.getSpuSaleAttrList();
+    }
+    //添加只需要品牌，和销售属性
     this.getTrademarkList();
-    this.getSpuImageList();
     this.getSaleAttrList();
-    this.getSpuSaleAttrList();
   },
 };
 </script>

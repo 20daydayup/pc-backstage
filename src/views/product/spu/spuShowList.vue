@@ -1,8 +1,14 @@
 <template>
   <div>
     <el-card style="margin-top: 20px">
-      <el-button type="primary" icon="el-icon-plus">添加属性</el-button>
-
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        :disabled="!category.category3Id"
+        @click="$emit('showUpdataList', { category3Id: category.category3Id })"
+        >添加属性</el-button
+      >
+      <!-- 有没有三级id时禁用按钮 -->
       <el-table :data="spuList" border style="width: 100%; margin-top: 20px">
         <el-table-column type="index" label="序号" width="130" align="center">
         </el-table-column>
@@ -15,6 +21,7 @@
               type="primary"
               icon="el-icon-plus"
               size="mini"
+              @click="$emit('showUpdataList', { category3Id: category.category3Id })"
             ></el-button>
             <el-button
               type="primary"
