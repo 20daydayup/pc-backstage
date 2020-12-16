@@ -153,7 +153,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
-          <el-button @click="$emit('showList', spu.category3Id)"
+          <el-button @click="$emit('showList',spu.category3Id)"
             >取消</el-button
           >
         </el-form-item>
@@ -232,6 +232,67 @@ export default {
   url: "blob:http://localhost:9528/4a2378e5-28d6-485e-b8c4-6eb4a
   */
   methods: {
+        //收集数据，保存
+    save() {
+      this.$refs.spuForm.validate(async (valid) => {
+        if (valid) {
+          console.log("校验通过~");
+          /* 数据：          {
+              "category3Id": 0,  // 三级分类id
+              "description": "string", // SPU描述
+              "id": 0, // SPU id
+              "spuImageList": [ // 图片列表
+                {
+                  "id": 0,
+                  "imgName": "string",
+                  "imgUrl": "string",
+                  "spuId": 0
+                }
+              ],
+              "spuName": "string", // SPU名称
+              "spuSaleAttrList": [ // SPU销售属性列表
+                {
+                  "baseSaleAttrId": 0,
+                  "id": 0,
+                  "saleAttrName": "string",
+                  "spuId": 0,
+                  "spuSaleAttrValueList": [
+                    {
+                      "baseSaleAttrId": 0,
+                      "id": 0,
+                      "isChecked": "string",
+                      "saleAttrName": "string",
+                      "saleAttrValueName": "string",
+                      "spuId": 0
+                    }
+                  ]
+                }
+              ],
+              "tmId": 0 // 品牌id
+            } */
+
+          // 收集数据
+          const spu = {
+            ...this.spu,
+            spuImageList: this.imageList,
+            spuSaleAttrList: this.spuSaleAttrList,
+          };
+
+          //发送请求
+          const result = await this.$API.spu.updateSpuInfo(spu);
+          if (result.code === 200) {
+            // 切换回showList，
+            this.$emit("showList", this.spu.category3Id);
+            // this.$nextTick(() => {
+            //   this.$bus.$emit("change", { category3Id: this.spu.category3Id });
+            // });//可以放在list组件中
+            this.$message.success("更新SPU成功~");
+          } else {
+            this.$message.error("更新SPU失败~");
+          }
+        }
+      });
+    },
     //删除当前SPU销售行
     delSaleAttr(index) {
       this.spuSaleAttrList.splice(index, 1);
@@ -334,67 +395,6 @@ export default {
       callback();
     },
 
-    //收集数据，保存
-    save() {
-      this.$refs.spuForm.validate(async (valid) => {
-        if (valid) {
-          console.log("校验通过~");
-          /* 数据：          {
-              "category3Id": 0,  // 三级分类id
-              "description": "string", // SPU描述
-              "id": 0, // SPU id
-              "spuImageList": [ // 图片列表
-                {
-                  "id": 0,
-                  "imgName": "string",
-                  "imgUrl": "string",
-                  "spuId": 0
-                }
-              ],
-              "spuName": "string", // SPU名称
-              "spuSaleAttrList": [ // SPU销售属性列表
-                {
-                  "baseSaleAttrId": 0,
-                  "id": 0,
-                  "saleAttrName": "string",
-                  "spuId": 0,
-                  "spuSaleAttrValueList": [
-                    {
-                      "baseSaleAttrId": 0,
-                      "id": 0,
-                      "isChecked": "string",
-                      "saleAttrName": "string",
-                      "saleAttrValueName": "string",
-                      "spuId": 0
-                    }
-                  ]
-                }
-              ],
-              "tmId": 0 // 品牌id
-            } */
-
-          // 收集数据
-          const spu = {
-            ...this.spu,
-            spuImageList: this.imageList,
-            spuSaleAttrList: this.spuSaleAttrList,
-          };
-
-          //发送请求
-          const result = await this.$API.spu.updateSpuInfo(spu);
-          if (result.code === 200) {
-            // 切换回showList，
-            this.$emit("showList", this.spu.category3Id);
-            // this.$nextTick(() => {
-            //   this.$bus.$emit("change", { category3Id: this.spu.category3Id });
-            // });//可以放在list组件中
-            this.$message.success("更新SPU成功~");
-          } else {
-            this.$message.error("更新SPU失败~");
-          }
-        }
-      });
-    },
     // 获取当前SPU销售属性列表
     async getSpuSaleAttrList() {
       const { id } = this.spu;

@@ -34,7 +34,7 @@ export default {
       // 等ShowList组件加载完成，在触发事件 重新获取SpuShowList数据
       //v-if组件会卸载,重新挂载需重新渲染，所以异步加载渲染数据
       this.$nextTick(() => {
-        this.$emit("change", { category3Id });
+        this.$bus.$emit("change", { category3Id });
       });
     },
   },

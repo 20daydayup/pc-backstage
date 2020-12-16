@@ -60,9 +60,7 @@ export default {
     return {
       page: 1,
       limit: 3,
-      // size: 3,
       total: 0,
-      // current: 1,
       category: {
         category1Id: "",
         category2Id: "",
@@ -96,10 +94,10 @@ export default {
         category3Id,
       });
       if (result.code === 200) {
-        console.log(result);
+        // console.log(result);
         this.spuList = result.data.records;
         this.total = result.data.total;
-        this.limit = result.data.limit;
+        // this.limit = result.data.limit;
         this.$message.success("获取SPU分页列表成功");
       } else {
         this.$message.error(result.message);
