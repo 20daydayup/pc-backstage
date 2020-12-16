@@ -21,7 +21,6 @@
               type="primary"
               icon="el-icon-plus"
               size="mini"
-              @click="$emit('showUpdataList', { category3Id: category.category3Id })"
             ></el-button>
             <el-button
               type="primary"
@@ -31,7 +30,9 @@
             ></el-button>
             <!-- 数据spuUpdateList 也需要使用-->
             <el-button type="info" icon="el-icon-info" size="mini"></el-button>
-            <el-popconfirm title="确定删除吗？"
+            <el-popconfirm
+              @onConfirm="del(row)"
+              :title="`确定删除${row.spuName}吗？`"
               ><el-button
                 type="danger"
                 icon="el-icon-delete"
@@ -77,6 +78,16 @@ export default {
     };
   },
   methods: {
+    async del(row) {
+      console.log(row);
+      const result = await this.$API.spu.deleteSpu(row.id);
+      if (result.code === 200) {
+        this.$message.success("获取SPU分页列表成功");
+        this.getPageList(this.page, this.limit);
+      } else {
+        this.$message.error(result.message);
+      }
+    },
     // 当选中1级或2级分类触发
     clearList() {
       this.spuList = [];
