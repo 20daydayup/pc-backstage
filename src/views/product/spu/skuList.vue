@@ -103,6 +103,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "SkuList",
   props: {
@@ -116,6 +117,11 @@ export default {
       spuSaleAttrList: [], // 销售属性数据
       attrList: [], // 平台属性数据
     };
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
   },
   methods: {
     /*  category1Id:2
@@ -157,11 +163,7 @@ export default {
     },
     // 获取所有平台属性列表
     async getAttrList() {
-      const result = await this.$API.attrs.getAttrList({
-        category1Id: this.spu.category1Id,
-        category2Id: this.spu.category2Id,
-        category3Id: this.spu.category3Id,
-      });
+      const result = await this.$API.attrs.getAttrList(this.category);
       if (result.code === 200) {
         this.$message.success("获取所有平台属性列表成功~");
         // 处理数据

@@ -21,8 +21,9 @@
               type="primary"
               icon="el-icon-plus"
               size="mini"
-              @click="$emit('showSpuList', { ...row, ...category })"
+              @click="$emit('showSpuList', { ...row })"
             ></el-button>
+            <!-- @click="$emit('showSpuList', { ...row, ...category })" -->
             <el-button
               type="primary"
               icon="el-icon-edit"
@@ -62,7 +63,8 @@
 </template>
 
 <script>
-import { TimeSelect } from "element-ui";
+import { Handler } from "mockjs";
+import { mapState } from "vuex";
 export default {
   name: "SpuShowList",
   data() {
@@ -70,17 +72,37 @@ export default {
       page: 1,
       limit: 3,
       total: 0,
-      category: {
-        category1Id: "",
-        category2Id: "",
-        category3Id: "",
-      },
+      // category: {
+      //   category1Id: "",
+      //   category2Id: "",
+      //   category3Id: "",
+      // },
       spuList: [], //商品列表
     };
   },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
+  watch: {
+    "category.category3Id": {
+      handler(category3Id) {
+        if (!category3Id) return;
+        this.getPageList(this.page, this.limit);
+      },
+      immediate: true, // 一上来触发一次
+    },
+    "category.category2Id"() {
+      this.clearList();
+    },
+    "category.category1Id"() {
+      this.clearList();
+    },
+  },
   methods: {
     async del(row) {
-      console.log(row);
+      // console.log(row);
       const result = await this.$API.spu.deleteSpu(row.id);
       if (result.code === 200) {
         this.$message.success("获取SPU分页列表成功");
@@ -95,15 +117,17 @@ export default {
       this.page = 1;
       this.limit = 3;
       this.total = 0;
-      this.category.category3Id = "";
+      // this.category.category3Id = "";
     },
+
     // 处理category的change（当选中三级分类时触发）
-    handelCategoryChange(category) {
-      //将函数从$on中提取出来
-      //触发事件,会将分类id传递过来
-      this.category = category;
-      this.getPageList(this.page, this.limit);
-    },
+    // handelCategoryChange(category) {
+    //将函数从$on中提取出来
+    //触发事件,会将分类id传递过来
+    //   this.category = category;
+    //   this.getPageList(this.page, this.limit);
+    // },使用vuex替代了
+
     //获取SPU分页列表
     async getPageList(page, limit) {
       const { category3Id } = this.category;
@@ -124,14 +148,14 @@ export default {
     },
   },
   mounted() {
-    this.$bus.$on("change", this.handelCategoryChange);
-    this.$bus.$on("clearList", this.clearList);
+    // this.$bus.$on("change", this.handelCategoryChange);
+    // this.$bus.$on("clearList", this.clearList);
   },
   beforeDestroy() {
     //切换组件是会卸载，连续切换会一直绑定、触发事件
     // 通常情况下：清除绑定的全局事件
-    this.$bus.$off("change", this.handelCategoryChange);
-    this.$bus.$off("clearList", this.clearList);
+    // this.$bus.$off("change", this.handelCategoryChange);
+    // this.$bus.$off("clearList", this.clearList);
   },
 };
 </script>

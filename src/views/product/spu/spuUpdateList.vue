@@ -148,9 +148,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
-          <el-button @click="$emit('showList', spu.category3Id)"
-            >取消</el-button
-          >
+          <el-button @click="showList = true">取消</el-button>
         </el-form-item>
       </el-form>
       <!-- 图片放大对话框 -->
@@ -166,6 +164,7 @@ export default {
   name: "SpuUpdateList",
   props: {
     item: Object,
+    showList: String,
   },
   data() {
     return {
@@ -283,7 +282,8 @@ export default {
 
           if (result.code === 200) {
             // 切换回showList，
-            this.$emit("showList", this.spu.category3Id);
+            // this.$emit("showList", this.spu.category3Id);
+            this.showList = true;
             // this.$nextTick(() => {
             //   this.$bus.$emit("change", { category3Id: this.spu.category3Id });
             // });//可以放在list组件中

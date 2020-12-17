@@ -17,7 +17,7 @@
         @showUpdateList="showUpdateList"
         @showSpuList="showSpuList"
       />
-      <SpuUpdateList v-else :item="item" @showList="showList" />
+      <SpuUpdateList v-else :item="item" :showList="showList" />
     </div>
   </div>
 </template>
@@ -48,14 +48,14 @@ export default {
       this.isShowList = false; //点击编辑按钮，显示编辑页面
       this.item = { ...row }; //将show组件的数据传到updata组件
     },
-    showList(category3Id) {
-      this.isShowList = true;
-      // 等ShowList组件加载完成，在触发事件 重新获取SpuShowList数据
-      //v-if组件会卸载,重新挂载需重新渲染，所以异步加载渲染数据
-      this.$nextTick(() => {
-        this.$bus.$emit("change", { category3Id });
-      });
-    },
+    // showList(category3Id) {
+    //   this.isShowList = true;
+    //   // 等ShowList组件加载完成，在触发事件 重新获取SpuShowList数据
+    //   //v-if组件会卸载,重新挂载需重新渲染，所以异步加载渲染数据
+    //   this.$nextTick(() => {
+    //     this.$bus.$emit("change", { category3Id });
+    //   });
+    // },
   },
   components: {
     Category,

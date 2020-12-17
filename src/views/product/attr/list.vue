@@ -40,7 +40,7 @@
             >
             <el-popconfirm
               @onConfirm="delAttr(row)"
-              :title="`确定删除 ${row.valueName} 吗？`"
+              :title="`确定删除 ${row.attrName} 吗？`"
               ><el-button type="danger" icon="el-icon-delete" slot="reference"
                 >删除</el-button
               ></el-popconfirm
@@ -128,6 +128,7 @@ categoryId: 61
 categoryLevel: 3
 id: 3621 */
 import Category from "@/components/Category";
+import { mapState } from "vuex";
 export default {
   name: "AttrList",
   data() {
@@ -138,17 +139,36 @@ export default {
         attrName: "",
         attrValueList: [],
       },
-      category: {
-        category1Id: "", // 请求参数设为响应式
-        category2Id: "",
-        category3Id: "",
-      },
+      // category: {
+      //   category1Id: "", // 请求参数设为响应式
+      //   category2Id: "",
+      //   category3Id: "",
+      // },
     };
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
+  watch: {
+    "category.category3Id": {
+      handler(category3Id) {
+        if (!category3Id) return;
+        this.getAttrList(this.category);
+      },
+      immediate: true, // 一上来触发一次
+    },
+    "category.category2Id"() {
+      this.clearList;
+    },
+    "category.category1Id"() {
+      this.clearList;
+    },
   },
   methods: {
     clearList() {
       //重新选择一级分类的时候，清空列表
-
       this.attrList = []; // 清空数据
       this.category.category3Id = ""; // 禁用按钮
     },
@@ -214,7 +234,6 @@ export default {
       });
     },
     edit(row) {
-      // console.log(row);
       this.$set(row, "edit", true); //对象添加新属性（响应式数据）
       this.$nextTick(() => {
         //在dom创建之后
@@ -227,9 +246,9 @@ export default {
       this.isShowList = false;
     },
 
-    async getAttrList(category) {
-      this.category = category;
-      const result = await this.$API.attrs.getAttrList(category);
+    async getAttrList() {
+      // this.category = category;
+      const result = await this.$API.attrs.getAttrList(this.category);
       if (result.code === 200) {
         // console.log(result.data);
         this.attrList = result.data;
@@ -240,12 +259,12 @@ export default {
   },
   mounted() {
     //三级联动多个组件使用
-    this.$bus.$on("change", this.getAttrList);
-    this.$bus.$on("clearList", this.clearList);
+    // this.$bus.$on("change", this.getAttrList);
+    // this.$bus.$on("clearList", this.clearList);
   },
   beforeDestroy() {
-    this.$bus.$off("change", this.getAttrList);
-    this.$bus.$off("clearList", this.clearList);
+    // this.$bus.$off("change", this.getAttrList);
+    // this.$bus.$off("clearList", this.clearList);
   },
   components: {
     Category,
