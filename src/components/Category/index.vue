@@ -87,7 +87,7 @@ export default {
     // 处理输入框的change事件
     async SelectCategroy1(category1Id) {
       // 重新选择时将数据为空
-       this.category.category2Id = "";
+      this.category.category2Id = "";
       this.category.category3Id = "";
 
       this["category/getCategory2List"](category1Id);
@@ -107,7 +107,7 @@ export default {
       // this.$bus.$emit("change", category);
     },
   },
-  async mounted() {
+  mounted() {
     // 获取1级分类列表
     this["category/getCategory1List"]();
   },

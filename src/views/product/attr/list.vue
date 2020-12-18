@@ -265,6 +265,9 @@ export default {
   beforeDestroy() {
     // this.$bus.$off("change", this.getAttrList);
     // this.$bus.$off("clearList", this.clearList);
+
+    //页面来回切换三级未变，清除3级id 解决方法；在beforeDestroy之前，或者路由守卫
+    this.$store.commit("category/RESET_CATEGORY_ID");
   },
   components: {
     Category,

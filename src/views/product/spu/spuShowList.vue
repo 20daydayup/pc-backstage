@@ -5,7 +5,7 @@
         type="primary"
         icon="el-icon-plus"
         :disabled="!category.category3Id"
-        @click="$emit('showUpdateList', { category3Id: category.category3Id })"
+        @click="$emit('showUpdateList')"
         >添加属性</el-button
       >
       <!-- 有没有三级id时禁用按钮 -->
@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import { Handler } from "mockjs";
 import { mapState } from "vuex";
 export default {
   name: "SpuShowList",
