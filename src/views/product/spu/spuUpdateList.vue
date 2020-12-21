@@ -148,7 +148,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
-          <el-button @click="this.$emit('showList')">取消</el-button>
+          <el-button @click="$emit('showList')">取消</el-button>
         </el-form-item>
       </el-form>
       <!-- 图片放大对话框 -->
@@ -160,6 +160,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "SpuUpdateList",
   props: {
@@ -185,6 +187,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
     // 格式化图片数据
     formatImageList() {
       return this.imageList.map((img) => {
@@ -266,6 +271,7 @@ export default {
           // 收集数据
           const spu = {
             ...this.spu,
+            category3Id: this.category.category3Id,
             spuImageList: this.imageList,
             spuSaleAttrList: this.spuSaleAttrList,
           };
@@ -488,7 +494,7 @@ export default {
       const result = await this.$API.spu.getTrademarkList();
       if (result.code === 200) {
         this.trademarkList = result.data;
-        console.log(result.data);
+        // console.log(result.data);
         this.$message.success("请求所有品牌数据成功");
       } else {
         this.$message.error(result.message);

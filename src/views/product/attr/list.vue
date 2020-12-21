@@ -155,15 +155,15 @@ export default {
     "category.category3Id": {
       handler(category3Id) {
         if (!category3Id) return;
-        this.getAttrList(this.category);
+        this.getAttrList();
       },
       immediate: true, // 一上来触发一次
     },
     "category.category2Id"() {
-      this.clearList;
+      this.clearList();
     },
     "category.category1Id"() {
-      this.clearList;
+      this.clearList();
     },
   },
   methods: {
@@ -215,7 +215,7 @@ export default {
       if (result.code === 200) {
         this.$message.success("更新数据成功");
         this.isShowList = true; //显示
-        this.getAttrList(this.category); //刷新数据
+        this.getAttrList(); //刷新数据
       } else {
         this.$message.error(result.message);
       }

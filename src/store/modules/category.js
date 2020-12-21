@@ -1,5 +1,6 @@
 import { Message } from "element-ui";
-import * as API from "@/api";
+// import * as API from "@/api";
+import API from "@/api";
 
 export default {
   namespaced: true, //命名空间

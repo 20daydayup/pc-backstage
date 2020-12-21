@@ -5,7 +5,7 @@
         type="primary"
         icon="el-icon-plus"
         :disabled="!category.category3Id"
-        @click="$emit('showUpdateList')"
+        @click="$emit('showUpdateList', { category3Id: category.category3Id })"
         >添加属性</el-button
       >
       <!-- 有没有三级id时禁用按钮 -->
@@ -21,14 +21,13 @@
               type="primary"
               icon="el-icon-plus"
               size="mini"
-              @click="$emit('showSpuList', { ...row })"
+              @click="$emit('showSpuList', { ...row, ...category })"
             ></el-button>
-            <!-- @click="$emit('showSpuList', { ...row, ...category })" -->
             <el-button
               type="primary"
               icon="el-icon-edit"
               size="mini"
-              @click="$emit('showUpdateList', row)"
+              @click="$emit('showUpdateList', { ...row, ...category })"
             ></el-button>
             <!-- 数据spuUpdateList 也需要使用-->
             <el-button type="info" icon="el-icon-info" size="mini"></el-button>
